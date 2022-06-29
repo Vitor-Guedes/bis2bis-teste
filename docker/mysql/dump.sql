@@ -26,3 +26,5 @@ create table if not exists `post` (
     `publish` int default 1,
     foreign key (`user_id`) references `visitor_user` (`id`)
 )engine=innodb;
+
+insert into admin_user ('username', 'password') values ('admin', 'admin');
