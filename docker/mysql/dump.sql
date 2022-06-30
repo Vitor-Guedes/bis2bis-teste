@@ -22,9 +22,9 @@ create table if not exists `post` (
     `title` varchar (150) not null,
     `content` varchar (150) not null,
     `created_at` timestamp default now(),
-    `updated_at` timestamp nullable,
+    `updated_at` timestamp null,
     `publish` int default 1,
-    foreign key (`user_id`) references `visitor_user` (`id`)
+    foreign key (`user_id`) references `visitor_user` (`id`) on delete cascade
 )engine=innodb;
 
-insert into admin_user ('username', 'password') values ('admin', 'admin');
+insert into `admin_user` (username, password) values ('admin', 'admin');

@@ -24,18 +24,14 @@ services:
         ipv4_address: 198.25.1.3
     extra_hosts:
       - "dev.rabbitmq.com.br:198.25.1.4"
-  mysql:
-    image: mysql:latest
-    ports:
-      - "3607:3606"
+  mariadb:
+    image: mariadb:latest
     environment:
-      MYSQL_ROOT_USER: root
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: blog
-      MYSQL_USER: default
-      MYSQL_PASSWORD: default
-    security_opt:
-      - seccomp:unconfined
+      MYSQL_DATABASE: 'blog'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+      MYSQL_ROOT_PASSWORD: 'root'
     volumes:
       - ./mysql/dump.sql:/tmp/dump.sql
     networks:

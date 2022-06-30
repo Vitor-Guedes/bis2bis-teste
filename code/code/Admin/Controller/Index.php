@@ -2,7 +2,9 @@
 
 namespace Code\Admin\Controller;
 
+use App\Container;
 use App\Mvc\Controller;
+use Code\Admin\Model\User;
 
 class Index
 extends Controller
@@ -32,6 +34,11 @@ extends Controller
     public function dash($request, $response)
     {
         $response->setBody("#Dash");
+
+        $user = new User();
+        $user->authenticate('admin', 'admin');
+
+        var_dump($user->id);
 
         return $response;
     }

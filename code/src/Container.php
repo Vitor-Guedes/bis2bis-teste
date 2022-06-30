@@ -19,17 +19,31 @@ class Container
     public function set(string $name = '', $service)
     {
         if (is_callable($service)) {
-            $this->_services[$name] = $service;
+            $this->_services[$name] = [
+                'called' => false,
+                'callable' => $service
+            ];
         }
     }
 
     public function get(string $name, $args = [])
     {
-        if (isset($this->_services[$name])) {
-            if ($args) {
-                return call_user_func_array($this->_services[$name], $args);
+        $service = $this->_services[$name] ?? false;
+        if ($service) {
+            if ($service['called'] == false) {
+                $callable = $service['callable'];
+    
+                $result = call_user_func_array($callable, $args);
+                
+                $service['called'] = true;
+                $service['callable'] = $result;
+
+                $this->_services[$name] = $service;
+    
+                return $result;
             }
-            return $this->_services[$name]();
+            return $service['callable'];
         }
+        return $service;
     }
 }
