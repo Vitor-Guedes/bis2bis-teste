@@ -11,6 +11,8 @@ include_once BASEDIR . "/vendor/autoload.php";
 try {
     $app = new App();
 
+    include_once BASEDIR . '/config/services.php';
+    
     include_once BASEDIR . '/config/routes.php';
 
     $app->run();

@@ -8,6 +8,8 @@ use App\Http\ResponseCode;
 
 trait Router
 {
+    protected $_prefix;
+
     protected $_routes = [];
 
     /**
@@ -35,6 +37,9 @@ trait Router
      */
     protected function add(string $method, $path, $callback)
     {
+        if ($this->_prefix) {
+            $path = $this->_prefix . $path;
+        }
         $this->_routes[$method][] = new Route($path, $callback);
     }
 
@@ -58,5 +63,18 @@ trait Router
         });
 
         return $noRoute;
+    }
+
+    /**
+     * @param string $prefix
+     * @param $callback
+     */
+    public function group(string $prefix = '', $callback)
+    {
+        $this->_prefix = $prefix;
+
+        $callback($this);
+
+        $this->_prefix = '';
     }
 }

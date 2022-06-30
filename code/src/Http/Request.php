@@ -33,4 +33,32 @@ class Request
         }
         return $this->_uri;
     }
+
+    public function getParams()
+    {
+        if ($this->isGet()) {
+            return $_GET;
+        }
+
+        if ($this->isPost()) {
+            return $_POST;
+        }
+
+        return $_REQUEST;
+    }
+
+    public function isGet()
+    {
+        return $this->getMethod() === 'get';
+    }
+
+    public function isPost()
+    {
+        return $this->getMethod() === 'post';
+    }
+
+    public function redirect(string $location = '')
+    {
+        Header("Location: $location", true, 301);
+    }
 }
