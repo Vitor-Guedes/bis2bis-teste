@@ -18,7 +18,7 @@ trait Router
      */
     public function get(string $path, $callback)
     {
-        $this->add('get', $path, $callback);
+        return $this->add('get', $path, $callback);
     }
 
     /**
@@ -27,7 +27,7 @@ trait Router
      */
     public function post(string $path, $callback)
     {
-        $this->add('post', $path, $callback);
+        return $this->add('post', $path, $callback);
     }
 
     /**
@@ -40,7 +40,9 @@ trait Router
         if ($this->_prefix) {
             $path = $this->_prefix . $path;
         }
-        $this->_routes[$method][] = new Route($path, $callback);
+        $route = new Route($path, $callback);
+        $this->_routes[$method][] = $route;
+        return $route;
     }
 
     /**

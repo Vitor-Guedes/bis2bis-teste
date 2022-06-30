@@ -4,7 +4,6 @@ namespace App;
 
 use App\Http\{Request, Response};
 use Exception;
-use LDAP\Result;
 
 class Route
 {
@@ -13,6 +12,8 @@ class Route
     protected $_pattern;
 
     protected $_callable;
+
+    protected $_middleware = [];
 
     /**
      * @param string $path
@@ -55,16 +56,35 @@ class Route
      */
     public function execute()
     {   
+        $request = new Request();
+        $response = new Response();
+
+        if (isset($this->_middleware['before'])) {
+            foreach ($this->_middleware['before'] as $middleware) {
+                if (!$middleware($request, $response)) {
+                    exit ;
+                }
+            }
+        }
+
         $response = is_string($this->_callable) 
-            ? $this->execStringCallable() 
-                : $this->execCallable() ;
+            ? $this->execStringCallable($request, $response) 
+                : $this->execCallable($request, $response) ;
+
+        if (isset($this->_middleware['after'])) {
+            foreach ($this->_middleware['after'] as $middleware) {
+                if (!$middleware($request, $response)) {
+                    exit ;
+                }
+            }
+        }
 
         if ($response instanceof Response) {
             return $response->send();
         }
     }
 
-    protected function execStringCallable()
+    protected function execStringCallable($request, $response)
     {
         $callable = $this->_callable;
         $callable = explode("@", $callable);
@@ -81,16 +101,24 @@ class Route
             if (!method_exists($instance, $action)) {
                 throw new Exception("Method $action in Class $controller not exist.");
             }
-
-            return $instance->$action(new Request(), new Response());
+            return $instance->$action($request, $response);
         }
-
         return false;
     }
 
-    protected function execCallable()
+    protected function execCallable($request, $response)
     {
         $callable = $this->_callable;
-        return $callable(new Request(), new Response());
+        return $callable($request, $response);
+    }
+
+    public function before($callable)
+    {
+        $this->_middleware['before'][] = $callable;
+    }
+
+    public function after($callable)
+    {
+        $this->_middleware['after'][] = $callable;
     }
 }

@@ -80,7 +80,9 @@ trait Builder
 
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            $this->addData($result);
+            if ($result) {
+                $this->addData($result);
+            }
         } catch (Exception $e) {
             var_dump($e->getMessage());
         }

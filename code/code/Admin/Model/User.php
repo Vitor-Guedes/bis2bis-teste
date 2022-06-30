@@ -15,4 +15,13 @@ extends Model
             ->andWhere('password', 'like', $password)
             ->get();
     }
+
+    public function toJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'username' => $this->username
+        ];
+        return json_encode($data);
+    }
 }

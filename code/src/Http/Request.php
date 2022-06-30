@@ -60,5 +60,6 @@ class Request
     public function redirect(string $location = '')
     {
         Header("Location: $location", true, 301);
+        exit;
     }
 }

@@ -2,9 +2,8 @@
 
 namespace Code\Admin\Controller;
 
-use App\Container;
 use App\Mvc\Controller;
-use Code\Admin\Model\User;
+use Code\Admin\Model\Session;
 
 class Index
 extends Controller
@@ -21,26 +20,32 @@ extends Controller
         $params = $request->getParams();
         $username = $params['username'] ?? '';
         $password = $params['password'] ?? '';
-        
-        if ($username && $password) {
-            if ($username == 'admin' && $password == 'admin') {
-                $request->redirect('/admin/dash');
-            }
+
+        $session = new Session();
+        $session->authenticate($username, $password);
+
+        if ($session->isLogged()) {
+            $request->redirect('/admin/dash');
         }
+
+        $request->redirect('/admin');
 
         return $response;
     }
 
     public function dash($request, $response)
     {
-        $response->setBody("#Dash");
+        return $this->_view->render($response, 'dashboard.phtml', [
+            'title' => "Dashboard"
+        ]);
+    }
 
-        $user = new User();
-        $user->authenticate('admin', 'admin');
+    public function loggout($request, $response)
+    {
+        $session = new Session();
+        $session->loggout();
 
-        var_dump($user->id);
-
-        return $response;
+        $request->redirect('/admin');
     }
 
     protected function getViewPath()
